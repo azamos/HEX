@@ -23,19 +23,24 @@ class AVL:
     def __init__(self):
         self.root = None
 
+    #search returns the node if exists, else returns insertion point(would-be parent)
+    #if the tree is not empty, and None if the tree is empty
     def search(self,key):
         p = self.root
         if p is None:
-            return p
+            return None
         while p is not None:
             if p.key==key:
                 return p
             if p.key < key:
+                if p.right is None:
+                    return p
                 p = p.right
             else:
+                if p.left is None:
+                    return p
                 p = p.left
-        if p is None:
-            return p.parent
+        return None
         
     def updateHeights(self,node):
         p = node
@@ -51,7 +56,8 @@ class AVL:
         y.right = node
         node.parent = y
         node.left = t3
-        t3.parent = node
+        if t3 is not None:
+            t3.parent = node
         if parent is not None:
             y.parent = parent
             if parent.key > y.key:
@@ -67,7 +73,8 @@ class AVL:
         y.left = node
         node.parent = y
         node.right = t2
-        t2.parent = node
+        if t2 is not None:
+            t2.parent = node
         if parent is not None:
             if parent.key > y.key:
                 parent.left = y
@@ -105,7 +112,10 @@ class AVL:
         n1 = Node(key=key)
         if self.root is None:
             self.root = n1
+            return
         adoptive_parent = self.search(key)
+        if adoptive_parent.key == key:#Don't insert if key already exist
+            return
         n1.parent = adoptive_parent
         if adoptive_parent.key > n1.key:
             adoptive_parent.left = n1
