@@ -123,3 +123,75 @@ class AVL:
             adoptive_parent.right = n1
         self.updateHeights(node=adoptive_parent)
         self.balance_tree_insert(node=adoptive_parent)
+
+    def succesor(self,node):#TODO - implement successor
+        if node.right is None:
+            return None
+        p = node.right
+        while p.left is not None:
+            p = p.left
+        return p
+
+    #assumes node is an actual Node != None, and returns its parent if it exists
+    def single_delete(self,node):
+        parent = node.parent
+        if parent is not None:
+            #first - parent is disavowing its soon to be deleted, good-for-nothing child.
+            if node.key < parent.key:
+                parent.left = None
+            else:
+                parent.right = None
+        #now, if the node itself is a leaf - done.
+
+        if node.left is None and node.right is None:
+            return parent#null if node is root
+        #Otherwise, need to diffrentiate between 1 child and 2 children
+
+        #2 children
+        if node.right and node.left:
+            node_succesor = self.succesor(node)
+            node.key = node_succesor.key
+            #TODO - make sure what needs to be done after deleting node_succesor
+            return self.single_delete(node_succesor)
+        
+        #single child
+        singleChild = node.left if node.right is None and node.left else node.right
+        if parent:
+            if parent.key > node.key:
+                parent.left = singleChild
+            else:
+                parent.right = singleChild
+            singleChild.parent = parent
+
+        return parent
+    
+    def balance_tree_delete(self,node):
+        z = node
+        while z is not None:
+            if z.get_balance_factor() > 1:
+                bf = z.left.get_balance_factor()
+                if bf>=0:
+                    self.right_rotate(node)
+                else:
+                    self.left_rotate(node.left)
+                    self.right_rotate(node)
+            elif z.get_balance_factor()<-1:
+                bf = z.right.get_balance_factor()
+                if bf<=0:
+                    self.left_rotate(node)
+                else:
+                    self.right_rotate(z.right)
+                    self.left_rotate(node)
+            if z.parent is None:
+                self.root = z
+            z = z.parent
+            
+
+    def delete(self,key):
+        node = self.search(key)
+        if node is None:
+            return None
+        parent = self.single_delete(node)
+        self.updateHeights(parent)
+        self.balance_tree_delete(node=node)
+        
