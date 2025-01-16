@@ -1,30 +1,11 @@
 import java.util.HashMap;
 
 public class DisjointSet {
-    public static String CreateKey(int i, int j) {
-        return i + "," + j;
-    }
-
-    public class Node {
-        String key;
-        Node next;
-        int rank;
-
-        public Node(String key) {
-            this.key = key;
-            next = this;
-            this.rank = 0;
-        }
-
-        public Node(int i, int j) {
-            this(CreateKey(i, j));
-        }
-    }
 
     HashMap<String, Node> nodeMap = new HashMap<>();
 
     public void CreateSingletonSet(int i, int j) {// Creates a Singleton Set comprised of only i,j.
-        String key = CreateKey(i, j);
+        String key = Node.CreateKey(i, j);
         if (!nodeMap.containsKey(key))
             nodeMap.put(key, new Node(key));
     }
@@ -43,7 +24,7 @@ public class DisjointSet {
      * and makes all itself and all of its ancestors point directly at the root.
      */
     public Node Search(int i, int j) {
-        String key = CreateKey(i, j);
+        String key = Node.CreateKey(i, j);
         if (!nodeMap.containsKey(key))
             return null;
         return find(nodeMap.get(key));
