@@ -127,17 +127,17 @@ public class Hex {
             if (row == 0 || col == 0 || row == hex.N - 1 || col == hex.N - 1)
                 hex.connectToVirtualNode(row, col, currPlayer);
             hex.connectToNeighbours(row, col, currPlayer);
-            if (currPlayer == playerOne && hex.player1Won()) {
-                System.out.print("Congrats! Player1 WON!");
+            if ((currPlayer == playerOne && hex.player1Won()) ||
+                    (currPlayer == playerTwo && hex.player2Won())) {
+                System.out.print("Congrats! Player " + (currPlayer == playerOne ? "1" : "2") + " WON!");
                 gameRunning = false;
-                scanner.close();
-            }
-            if (currPlayer == playerTwo && hex.player2Won()) {
-                System.out.print("Congrats! Player2 WON!");
-                gameRunning = false;
-                scanner.close();
             }
             turn++;
+            if (turn == hex.N * hex.N) {
+                System.out.println("It's a draw! No more moves left.");
+                gameRunning = false;
+            }
         }
+        scanner.close();
     }
 }
